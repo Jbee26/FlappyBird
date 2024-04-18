@@ -6,16 +6,16 @@ public class Gators {
     public int dx = 2;
     public int dy = 2;
     public int xpos;
-    public int ypos = 700;
+    public int ypos = 1000;
     public int width = 100;
     public int height = (int)(Math.random()*401 ) ;
-    public Rectangle rec;
+    public static Rectangle recD;
     public Image pic;
 
     public Gators(int paramxpos, int paramypos) {
         xpos = paramxpos;
         ypos = paramypos;
-        rec = new Rectangle(xpos,ypos,width,height);
+        recD = new Rectangle(xpos,ypos,width,height);
 
     }
 
@@ -38,12 +38,7 @@ public class Gators {
             xpos = xpos + 1000;
         }
 
-
-
-
-
-
-
+        recD = new Rectangle(xpos,ypos,width,height);
 
     }
 
