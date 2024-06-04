@@ -59,6 +59,17 @@ public class BasicGame implements Runnable, KeyListener  {
 
     public Gators [] pond;
 
+    public boolean gamePlaying;
+
+    public boolean gameOver;
+
+    public boolean isPaused;
+
+    public SoundFile flying;
+
+
+
+
 
     // Main method definition
     // This is the code that runs first and automatically
@@ -74,31 +85,34 @@ public class BasicGame implements Runnable, KeyListener  {
 
         setUpGraphics();
         canvas.addKeyListener(this);
-        birdo = new Bird("Birdo", 200,300);
-        ///Background = Toolkit.getDefaultToolkit().getImage("jungle.jpeg");
-        birdoPic = Toolkit.getDefaultToolkit().getImage("bird.jpg");
+        birdo = new Bird("Birdo", 100,300);
+        Background = Toolkit.getDefaultToolkit().getImage("jungle.jpeg");
+        birdoPic = Toolkit.getDefaultToolkit().getImage("bird.png");
 
         gorilla1 = new Gorillas(50,50);
         gpic = Toolkit.getDefaultToolkit().getImage("gorilla.png");
-        branch = new Gorillas[3];
+        branch = new Gorillas[100];
         branch[0] = new Gorillas(50,50);
         gator1 = new Gators(50,800);
         gapic = Toolkit.getDefaultToolkit().getImage("gator.png");
-        pond = new Gators[3];
+        pond = new Gators[100];
         pond[0] = new Gators(50,700);
+        flying = new SoundFile("Chickens in a Barn 01.wav");
+        flying.play();
 
 
 
-        for (int x=0; x<3; x++) {
-            branch[x] = new Gorillas(x*300+300, 0);
+        for (int x=0; x<branch.length; x++) {
+            branch[x] = new Gorillas(x*500+500, 0);
             branch[x].pic = Toolkit.getDefaultToolkit().getImage("gorilla.png");
         }
 
 
         for (int x=0; x<pond.length; x++) {
-            pond[x] = new Gators(x*300+300, 400);
+            pond[x] = new Gators(x*500+1000, 0);
             pond[x].pic = Toolkit.getDefaultToolkit().getImage("gator.png");
         }
+
 
 
 
@@ -121,10 +135,16 @@ public class BasicGame implements Runnable, KeyListener  {
     public void run() {
         //for the moment we will loop things forever.
         while (true) {
-            moveThings();  //move all the game objects
-            collisions();
+
+            if (gamePlaying == true && isPaused == false ) {
+
+                moveThings();  //move all the game objects
+                collisions();
+
+            }
             render();  // paint the graphics
-            pause(10); // sleep for 10 ms
+            pause(10 ); // sleep for 10 ms
+
 
         }
     }
@@ -132,11 +152,11 @@ public class BasicGame implements Runnable, KeyListener  {
     public void moveThings() {
         //call the move() code for each object
         birdo.move();
-        for (int x = 0; x < 3; x++) {
+        for (int x = 0; x < 100; x++) {
             branch[x].move();
         }
 
-        for (int x = 0; x < 3; x++) {
+        for (int x = 0; x < 100; x++) {
             pond[x].move();
         }
 
@@ -146,30 +166,82 @@ public class BasicGame implements Runnable, KeyListener  {
         for (int x = 0; x < pond.length; x++) {
 
 
-            if (pond[x].recD.intersects(birdo.rec)) {
-                birdo.height += 30;
+            if (branch[x].recU.intersects(birdo.rec)) {
+                birdo.isAliveG = false;
+                birdo.ypos = 0;
+
             }
+
+            if (pond[x].recD.intersects(birdo.rec)) {
+                birdo.isAliveA = false;
+                birdo.ypos = 700;
+
+            }
+
+
 
 
         }
 
     }
 
+
+
+
+
+
     //Paints things on the screen using bufferStrategy
     private void render() {
         Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
         g.clearRect(0, 0, WIDTH, HEIGHT);
 
-        g.drawImage(Background, 0,0, 1000, 700, null);
-        g.drawImage(birdoPic, birdo.xpos, birdo.ypos, birdo.width, birdo.height, null);
-
-        for (int x=0;x<branch.length;x++) {
-            g.drawImage(branch[x].pic,branch[x].xpos,branch[x].ypos,branch[x].width,branch[x].height,null);
+        if (gamePlaying == false ) {
+            g.setColor(Color.GREEN);
+            g.fillRect(0,0,WIDTH, HEIGHT);
+            g.setColor(Color.YELLOW);
+            g.setFont(new Font("Times Roman", Font.PLAIN, 60));
+            g.drawString("Press Return to Start!", 300,300);
         }
 
-        for (int x=0;x<pond.length;x++) {
-            g.drawImage(pond[x].pic,pond[x].xpos,pond[x].ypos,pond[x].width,pond[x].height,null);
-            g.drawRect(pond[x].recD.x, pond[x].recD.y, pond[x].recD.width, pond[x].recD.height);
+        else if (gamePlaying == true && gameOver == false) {
+
+            g.drawImage(Background, 0, 0, 1000, 700, null);
+            if (birdo.isAliveG) {
+                g.drawImage(birdoPic, birdo.xpos, birdo.ypos, birdo.width, birdo.height, null);
+            }
+
+            for (int x = 0; x < branch.length; x++) {
+                g.drawImage(branch[x].pic, branch[x].xpos, branch[x].ypos, branch[x].width, branch[x].height, null);
+            }
+
+            for (int x = 0; x < pond.length; x++) {
+                g.drawImage(pond[x].pic, pond[x].xpos, pond[x].ypos, pond[x].width, pond[x].height, null);
+                
+
+            }
+
+            if (birdo.isAliveG == false) {
+                g.setColor(Color.GREEN);
+                g.fillRect(0,0,WIDTH, HEIGHT);
+                g.setColor(Color.YELLOW);
+                g.setFont(new Font("Times Roman", Font.PLAIN, 60));
+                g.drawString("You Went Bannanas!", 300,100);
+                g.drawString("Restart to Try Again", 300,500);
+
+
+            }
+
+            if (birdo.isAliveA == false) {
+                g.setColor(Color.GREEN);
+                g.fillRect(0,0,WIDTH, HEIGHT);
+                g.setColor(Color.YELLOW);
+                g.setFont(new Font("Times Roman", Font.PLAIN, 60));
+                g.drawString("Gone Fishin'!", 300,100);
+                g.drawString("Restart to Try Again", 300,500);
+
+
+            }
+
 
         }
 
@@ -230,6 +302,7 @@ public class BasicGame implements Runnable, KeyListener  {
         System.out.println("Key pressed: " + key + ", Key code:" + keyCode);
 
 
+
     }
 
     @Override
@@ -241,11 +314,19 @@ public class BasicGame implements Runnable, KeyListener  {
             for (int x = 0; x<100; x++) {
 
                 birdo.ypos = birdo.ypos - 1;
+                flying.play();
                 pause(2);
+
 
             }
 
         }
+
+        if (gamePlaying == false && keyCode == 10) {
+            gamePlaying = true;
+
+        }
+
 
 
 

@@ -4,17 +4,21 @@ public class Bird {
 
         public int xpos;
         public int ypos;
-        public boolean isAlive;
         public int dx = 2;
         public int dy = 2;
-        public int width = 100;
-        public int height = 100;
+        public int width = 80;
+        public int height = 80;
         public String name;
         public Rectangle rec;
         public boolean upIsPressed;
         public boolean downIsPressed;
         public boolean leftIsPressed;
         public boolean rightIsPressed;
+
+        public boolean isAliveG = true;
+        public boolean isAliveA = true;
+
+
 
 
         public Bird(String paramName, int paramXpos, int paramypos) {

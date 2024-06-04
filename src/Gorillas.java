@@ -9,12 +9,13 @@ public class Gorillas {
     public int xpos;
     public int ypos = 0;
     public int width = 150;
-    public int height = (int)(Math.random()*351 ) ;
-    public Rectangle recU;
+    public int height = (int)(Math.random()*300+50 ) ;
+    public Rectangle recU; 
 
     public Gorillas(int paramxpos, int paramypos) {
         xpos = paramxpos;
         ypos = paramypos;
+
         recU = new Rectangle(xpos,ypos,width,height);
 
     }
@@ -35,7 +36,7 @@ public class Gorillas {
         }
 
         if (xpos < 0) {
-            xpos = xpos + 1000;
+            xpos = xpos + 10000;
         }
 
         recU = new Rectangle(xpos,ypos,width,height);
